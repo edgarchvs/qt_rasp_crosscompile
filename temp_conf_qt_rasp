@@ -1,0 +1,35 @@
+_PATH_TO_IMAGE=~/Documents/2019-09-26-raspbian-buster-full.img
+_SYSROOT=/mnt/rasp-pi-rootfs
+_QT_VERSION=5.10.1
+_CROSS_COMPILE=~/github/gcc-linaro-5.5.0-2017.10-x86_64_arm-linux-gnueabihf/bin/arm-linux-gnueabihf-
+
+
+./configure -developer-build \
+-opensource \
+-release \
+-device linux-rasp-pi-g++ \
+-device-option CROSS_COMPILE=$_CROSS_COMPILE \
+-platform linux-g++-64 \
+-no-use-gold-linker -no-gbm \
+-static \
+-make libs \
+-nomake examples -nomake tests \
+-gui -widgets \
+-glib \
+-no-icu \
+-no-pch \
+-no-feature-completer \
+-no-feature-openssl \
+OPENSSL_LIBS="-llibcrypto -llibssl" \
+-skip qtwebengine -skip qtscript \
+-sysroot $_SYSROOT \
+-confirm-license \
+-prefix /usr/local/qt5-10-1 \
+-extprefix ~/raspi/qt5-10-1_pi \
+-hostprefix ~/raspi/qt5-10-1 -v
+
+-eglfs \
+-opengl es2 \
+-xplatform RasperryPi \
+-reduce-exports 
+-no-glib

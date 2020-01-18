@@ -1,0 +1,50 @@
+Ths is a implementation of Qtbase crosscompilation.
+Tutorials:
+	https://wiki.qt.io/RaspberryPi2EGLFS
+	https://mechatronicsblog.com/cross-compile-and-deploy-qt-5-12-for-raspberry-pi
+
+
+_PATH_TO_IMAGE=~/Documents/2019-09-26-raspbian-buster-full.img
+_SYSROOT=/mnt/rasp-pi-rootfs
+_QT_VERSION=5.12.5
+_CROSS_COMPILE=~/github/gcc-linaro-5.5.0-2017.10-x86_64_arm-linux-gnueabihf/bin/arm-linux-gnueabihf-
+
+
+Mount Raspbian image:
+> sudo mount -o loop,offset=272629760 $_PATH_TO_IMAGE $_SYSROOT
+
+Qtbase mkspecs
+> gedit ./mkspecs/devices/linux-rasp-pi-g++/qmake.conf
+
+Configure Qt base
+> git clone git://code.qt.io/qt/qtbase.git -b $_QT_VERSION
+
+> ./configure -reduce-exports -release -opengl es2 \
+-platform linux-g++-64 \
+-no-use-gold-linker -no-gbm \
+-static -no-glib \
+-make libs \
+-nomake examples -nomake tests \
+-no-icu \
+-no-pch \
+-no-feature-completer \
+-no-feature-openssl \
+OPENSSL_LIBS="-llibcrypto -llibssl" \
+-skip qtwebengine -skip qtscript \
+-device linux-rasp-pi-g++ \
+-device-option CROSS_COMPILE=$_CROSS_COMPILE \
+-sysroot $_SYSROOT \
+-opensource -confirm-license \
+-prefix /usr/local/qt5pi \
+-extprefix ~/raspi/qt5pi \
+-hostprefix ~/raspi/qt5 -v
+
+
+
+# Mount
+sudo umount /mnt/rasp-pi-rootfs
+sudo sshfs -o allow_other pi@192.168.1.138:/ /mnt/rasp-pi-rootfs/
+
+# Sync
+sudo rsync -avz /home/edgar_ie/raspi/qt5pi/ /mnt/rasp-pi-rootfs/usr/
+
